@@ -1,0 +1,32 @@
+{
+    "name": "klaude/eloquent-preferences",
+    "type": "library",
+    "description": "Preferences for Laravel Eloquent models",
+    "keywords": ["laravel", "eloquent", "preferences"],
+    "homepage": "https://github.com/klaude/eloquent-preferences",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Laude",
+            "email": "nerfyoda@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/database": "~5.0",
+        "illuminate/support": "~5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "KLaude\\EloquentPreferences\\": "src/"
+        }
+    },
+    "require-dev": {
+        "illuminate/events": "~5.0",
+        "phpunit/phpunit": "~5.0|~4.8"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KLaude\\EloquentPreferences\\Tests\\": "tests/"
+        }
+    }
+}

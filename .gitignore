@@ -1,0 +1,23 @@
+# Editors
+*.sublime-project
+*.sublime-workspace
+.project
+.buildpath
+.idea/
+.settings/
+
+# vim
+.*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# Composer
+composer.phar
+composer.lock
+vendor/
+
+# Unit tests
+phpunit.xml
+build/
