@@ -132,9 +132,13 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('value2', $preferences[1]->value);
     }
 
-    public function testGetDefaultValues()
+    public function testGetModelDefinedDefaultValues()
     {
-        $this->assertNull($this->testUser->getPreference('nonexistent'));
+        $this->assertEquals('defined by model', $this->testUser->getPreference('model defined default'));
+    }
+
+    public function testGetMethodDefinedDefaultValues()
+    {
         $this->assertEquals('some default', $this->testUser->getPreference('nonexistent', 'some default'));
     }
 

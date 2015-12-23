@@ -19,4 +19,8 @@ class TestUser extends Model
     protected $table = 'users';
     protected $guarded = [];
     public $timestamps = false;
+
+    protected $preference_defaults = [
+        'model defined default' => 'defined by model',
+    ];
 }

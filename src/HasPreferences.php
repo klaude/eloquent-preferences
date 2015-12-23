@@ -8,7 +8,7 @@ namespace KLaude\EloquentPreferences;
  * Add `use HasPreferences;` to your model class to associate preferences with
  * that model.
  *
- * @property \Illuminate\Database\Eloquent\Collection|\Klaude\EloquentPreferences\Preference[] $preferences
+ * @property \Illuminate\Database\Eloquent\Collection|\KLaude\EloquentPreferences\Preference[] $preferences
  */
 trait HasPreferences
 {
@@ -33,11 +33,19 @@ trait HasPreferences
     {
         $savedPreference = $this->preferences()->where('preference', $preference)->first();
 
-        if (is_null($savedPreference)) {
-            return $defaultValue;
+        if (!is_null($savedPreference)) {
+            return $savedPreference->value;
         }
 
-        return $savedPreference->value;
+        if (
+            property_exists($this, 'preference_defaults')
+            && is_array($this->preference_defaults)
+            && array_key_exists($preference, $this->preference_defaults)
+        ) {
+            return $this->preference_defaults[$preference];
+        }
+
+        return $defaultValue;
     }
 
     /**
