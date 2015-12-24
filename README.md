@@ -183,9 +183,9 @@ $myPreference = $myModel->getPreference('unknown preference', 'some default valu
 class MyModel extends Model
 {
     use HasPreferences;
-    
+
     // ...
-    
+
     protected $preference_defaults = [
         'my-default-preference' => 'my-default-value',
     ];
@@ -199,3 +199,5 @@ $myPreference = $myModel->getPreference('my-default-preference');
 // $myPreference = 'fallback value'
 $myPreference = $myModel->getPreference('my-unstored-preference', 'fallback value');
 ```
+
+Please note default preference values only apply when using the `getPreference()` and `prefers()` methods. Default values are not honored when retrieving preferences by Eloquent query.

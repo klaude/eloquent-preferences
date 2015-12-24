@@ -37,15 +37,7 @@ trait HasPreferences
             return $savedPreference->value;
         }
 
-        if (
-            property_exists($this, 'preference_defaults')
-            && is_array($this->preference_defaults)
-            && array_key_exists($preference, $this->preference_defaults)
-        ) {
-            return $this->preference_defaults[$preference];
-        }
-
-        return $defaultValue;
+        return $this->getDefaultValue($preference, $defaultValue);
     }
 
     /**
@@ -136,5 +128,37 @@ trait HasPreferences
         $this->preferences()->delete();
 
         return $this;
+    }
+
+    /**
+     * Retrieve a preference's default value.
+     *
+     * Look in the model first, otherwise return the user specified default
+     * value.
+     *
+     * @param string $preference
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    protected function getDefaultValue($preference, $defaultValue = null)
+    {
+        if ($this->hasModelDefinedDefaultValue($preference)) {
+            return $this->preference_defaults[$preference];
+        }
+
+        return $defaultValue;
+    }
+
+    /**
+     * Determine if a model has a default preference value defined.
+     *
+     * @param string $preference
+     * @return bool
+     */
+    protected function hasModelDefinedDefaultValue($preference)
+    {
+        return property_exists($this, 'preference_defaults')
+            && is_array($this->preference_defaults)
+            && array_key_exists($preference, $this->preference_defaults);
     }
 }
