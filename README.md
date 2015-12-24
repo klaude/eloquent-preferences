@@ -106,7 +106,7 @@ This builds a polymorphic has-many relationship called "preferences" that you ca
 ```php
 // Retrieving preferences via Eloquent
 /** @var KLaude\EloquentPreferences\Preference $myPreference */
-$myPreference = MyModel::find($someId)->prefrences()->where('preference', 'my-preference')->get();
+$myPreference = MyModel::find($someId)->preferences()->where('preference', 'my-preference')->get();
 
 // Saving preferences via Eloquent
 $preference = new Preference;
