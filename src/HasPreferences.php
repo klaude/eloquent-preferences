@@ -2,6 +2,8 @@
 
 namespace KLaude\EloquentPreferences;
 
+use Illuminate\Support\Collection as BaseCollection;
+
 /**
  * Assign preferences to an Eloquent Model.
  *
@@ -33,11 +35,11 @@ trait HasPreferences
     {
         $savedPreference = $this->preferences()->where('preference', $preference)->first();
 
-        if (!is_null($savedPreference)) {
-            return $savedPreference->value;
-        }
+        $value = is_null($savedPreference)
+            ? $this->getDefaultValue($preference, $defaultValue)
+            : $savedPreference->value;
 
-        return $this->getDefaultValue($preference, $defaultValue);
+        return $this->castPreferenceValue($preference, $value);
     }
 
     /**
@@ -63,6 +65,13 @@ trait HasPreferences
      */
     public function setPreference($preference, $value)
     {
+        // Serialize date and JSON-like preference values.
+        if ($this->isPreferenceDateCastable($preference)) {
+            $value = $this->fromDateTime($value);
+        } elseif ($this->isPreferenceJsonCastable($preference)) {
+            $value = $this->asJson($value);
+        }
+
         /** @var Preference $savedPreference */
         $savedPreference = $this->preferences()->where('preference', $preference)->first();
 
@@ -160,5 +169,118 @@ trait HasPreferences
         return property_exists($this, 'preference_defaults')
             && is_array($this->preference_defaults)
             && array_key_exists($preference, $this->preference_defaults);
+    }
+
+    /**
+     * Determine if a model has a preference's type cast defined.
+     *
+     * @param string $preference
+     * @param array|string|null $types
+     * @return bool
+     */
+    protected function hasPreferenceCast($preference, $types = null)
+    {
+        if (
+            property_exists($this, 'preference_casts')
+            && is_array($this->preference_casts)
+            && array_key_exists($preference, $this->preference_casts)
+        ) {
+            return $types
+                ? in_array($this->getPreferenceCastType($preference), (array) $types, true)
+                : true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether a preference value is Date / DateTime castable for
+     * inbound manipulation.
+     *
+     * This logic is taken from the upsteam Eloquent model's isDateCastable()
+     * method
+     *
+     * @see Model::isDateCastable()
+     * @param string $preference
+     * @return bool
+     */
+    protected function isPreferenceDateCastable($preference)
+    {
+        return $this->hasPreferenceCast($preference, ['date', 'datetime']);
+    }
+
+    /**
+     * Determine whether a preference value is JSON castable for inbound
+     * manipulation.
+     *
+     * This logic is taken from the upsteam Eloquent model's isJsonCastable()
+     * method
+     *
+     * @see Model::isJsonCastable()
+     * @param string $preference
+     * @return bool
+     */
+    protected function isPreferenceJsonCastable($preference)
+    {
+        return $this->hasPreferenceCast($preference, ['array', 'json', 'object', 'collection']);
+    }
+
+    /**
+     * Retrieve the type of variable to cast a preference value to.
+     *
+     * @param string $preference
+     * @return string
+     */
+    protected function getPreferenceCastType($preference)
+    {
+        return trim(strtolower($this->preference_casts[$preference]));
+    }
+
+    /**
+     * Cast a preference value's type.
+     *
+     * This logic is taken from the upsteam Eloquent model's castAttribute()
+     * method
+     *
+     * @see Model::castAttribute()
+     * @see https://laravel.com/docs/5.2/eloquent-mutators#attribute-casting
+     * @param string $preference
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function castPreferenceValue($preference, $value)
+    {
+        if (!$this->hasPreferenceCast($preference)) {
+            return $value;
+        }
+
+        switch ($this->getPreferenceCastType($preference)) {
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            case 'real':
+            case 'float':
+            case 'double':
+                return (float) $value;
+            case 'string':
+                return (string) $value;
+            case 'bool':
+            case 'boolean':
+                return (bool) $value;
+            case 'object':
+                return $this->fromJson($value, true);
+            case 'array':
+            case 'json':
+                return $this->fromJson($value);
+            case 'collection':
+                return new BaseCollection($this->fromJson($value));
+            case 'date':
+            case 'datetime':
+                return $this->asDateTime($value);
+            case 'timestamp':
+                return $this->asTimeStamp($value);
+            default:
+                return $value;
+        }
     }
 }

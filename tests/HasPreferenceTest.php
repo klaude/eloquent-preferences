@@ -2,15 +2,18 @@
 
 namespace KLaude\EloquentPreferences\Tests;
 
+use Carbon\Carbon;
 use CreateModelPreferencesTable;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Collection;
 use KLaude\EloquentPreferences\Preference;
 use KLaude\EloquentPreferences\Tests\Models\TestUser;
 use KLaude\EloquentPreferences\Tests\Support\ConnectionResolver;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 
 /**
  * This test's structure is based off the Laravel Framework's SoftDeletes trait
@@ -195,5 +198,80 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(TestUser::class, $result);
         $this->assertEmpty($this->testUser->preferences);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideInternalTypesInputsAndOutputs()
+    {
+        $date = Carbon::now();
+
+        return [
+            'int cast to int' => ['int-preference', 1234, 'int', 1234],
+            'string cast to int' => ['int-preference', '1234', 'int', 1234],
+            'integer' => ['integer-preference', 1234, 'int', 1234],
+            'real' => ['real-preference', 12.34, 'float', 12.34],
+            'double' => ['double-preference', 12.34, 'float', 12.34],
+            'float' => ['float-preference', 12.34, 'float', 12.34],
+            'string' => ['string-preference', 'foo', 'string', 'foo'],
+            'bool true cast to bool' => ['bool-preference', true, 'bool', true],
+            'bool false cast to bool' => ['bool-preference', false, 'bool', false],
+            'int true cast to bool' => ['bool-preference', 1, 'bool', true],
+            'array cast to array' => ['array-preference', [1, 2], 'array', [1, 2]],
+            'json cast to array' => ['json-preference', [1, 2], 'array', [1, 2]],
+            'timestamp' => ['timestamp-preference', $date, 'int', $date->timestamp],
+            'unknown types don\'t get cast' => ['undefined-type-preference', '1234', 'string', '1234'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideInternalTypesInputsAndOutputs
+     * @param string $preference
+     * @param int|float|string|bool $input
+     * @param string $expectedInternalType
+     * @param int|float|string|bool $expectedOutput
+     */
+    public function testCastInternalTypeValues($preference, $input, $expectedInternalType, $expectedOutput)
+    {
+        $this->testUser->setPreference($preference, $input);
+        $value = $this->testUser->getPreference($preference);
+
+        $this->assertInternalType($expectedInternalType, $value);
+        $this->assertEquals($expectedOutput, $value);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideObjectTypesInputsAndOutputs()
+    {
+        $object = new stdClass;
+        $object->foo = 'bar';
+        $collection = new Collection(['foo']);
+        $date = Carbon::now();
+
+        return [
+            'object' => ['object-preference', $object, 'stdClass', $object],
+            'collection' => ['collection-preference', $collection, Collection::class, $collection],
+            'date' => ['date-preference', $date, Carbon::class, $date],
+            'datetime' => ['datetime-preference', $date, Carbon::class, $date],
+        ];
+    }
+
+    /**
+     * @dataProvider provideObjectTypesInputsAndOutputs
+     * @param string $preference
+     * @param int|float|string|bool $input
+     * @param string $expectedClass
+     * @param int|float|string|bool $expectedOutput
+     */
+    public function testCastObjectTypeValues($preference, $input, $expectedClass, $expectedOutput)
+    {
+        $this->testUser->setPreference($preference, $input);
+        $value = $this->testUser->getPreference($preference);
+
+        $this->assertInstanceOf($expectedClass, $value);
+        $this->assertEquals($expectedOutput, $value);
     }
 }

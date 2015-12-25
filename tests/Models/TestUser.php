@@ -23,4 +23,23 @@ class TestUser extends Model
     protected $preference_defaults = [
         'model defined default' => 'defined by model',
     ];
+
+    protected $preference_casts = [
+        'int-preference' => 'int',
+        'integer-preference' => 'integer',
+        'real-preference' => 'real',
+        'float-preference' => 'float',
+        'double-preference' => 'double',
+        'string-preference' => 'string',
+        'bool-preference' => 'bool',
+        'boolean-preference' => 'boolean',
+        'object-preference' => 'object',
+        'array-preference' => 'array',
+        'json-preference' => 'json',
+        'collection-preference' => 'collection',
+        'date-preference' => 'date',
+        'datetime-preference' => 'datetime',
+        'timestamp-preference' => 'timestamp',
+        'undefined-type-preference' => 'undefined',
+    ];
 }

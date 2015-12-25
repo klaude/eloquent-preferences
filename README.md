@@ -13,6 +13,7 @@ Use this library to bind multiple key/value pair preferences to your application
     * [Setting Preferences](#setting-preferences)
     * [Removing Preferences](#removing-preferences)
   * [Default Preference Values](#default-preference-values)
+  * [Casting Preference Values](#casting-preference-values)
 
 <a name="installation"></a>
 ## Installation
@@ -201,3 +202,27 @@ $myPreference = $myModel->getPreference('my-unstored-preference', 'fallback valu
 ```
 
 Please note default preference values only apply when using the `getPreference()` and `prefers()` methods. Default values are not honored when retrieving preferences by Eloquent query.
+
+<a name="casting-preference-values"></a>
+### Casting Preference Values
+
+Preferences are stored as strings in the database, but can be cast to different types when retrieved.
+
+Declare a protected `$preference_casts` array in your model containing a key/value pair of preference names and the types to cast their values to. Preferences are stored and cast according to the same rules as [Eloquent's attribute type casts](https://laravel.com/docs/5.2/eloquent-mutators#attribute-casting).
+
+```php
+class MyModel extends Model
+{
+    use HasPreferences;
+
+    // ...
+
+    protected $preference_casts = [
+        'boolean-preference' => 'boolean',
+        'floating-point-preference' => 'float',
+        'date-preference' => 'date',
+    ];
+}
+```
+
+As with default values, casting preferences is only performed when using the `getPreference()`, `prefers()`, `setPreference()`, and `setPreferences()` helper methods.
