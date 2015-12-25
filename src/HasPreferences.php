@@ -16,62 +16,6 @@ use Illuminate\Support\Collection as BaseCollection;
  */
 trait HasPreferences
 {
-    // Re-declare methods defined in Eloquent as abstract methods to prevent IDE
-    // and CI warnings.
-
-    /**
-     * Define a polymorphic one-to-many relationship.
-     *
-     * @param  string  $related
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    abstract public function morphMany($related, $name, $type = null, $id = null, $localKey = null);
-
-    /**
-     * Convert a DateTime to a storable string.
-     *
-     * @param  \DateTime|int  $value
-     * @return string
-     */
-    abstract public function fromDateTime($value);
-
-    /**
-     * Encode the given value as JSON.
-     *
-     * @param  mixed  $value
-     * @return string
-     */
-    abstract protected function asJson($value);
-
-    /**
-     * Decode the given JSON back into an array or object.
-     *
-     * @param  string  $value
-     * @param  bool  $asObject
-     * @return mixed
-     */
-    abstract public function fromJson($value, $asObject = false);
-
-    /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param  mixed  $value
-     * @return \Carbon\Carbon
-     */
-    abstract protected function asDateTime($value);
-
-    /**
-     * Return a timestamp as unix timestamp.
-     *
-     * @param  mixed  $value
-     * @return int
-     */
-    abstract protected function asTimeStamp($value);
-
     /**
      * A model can have many preferences.
      *
@@ -126,7 +70,7 @@ trait HasPreferences
         // Serialize date and JSON-like preference values.
         if ($this->isPreferenceDateCastable($preference)) {
             $value = $this->fromDateTime($value);
-        } elseif ($this->isPreferenceJsonCastable($preference)) {
+        } elseif ($this->isPreferenceJsonCastable($preference) && method_exists($this, 'asJson')) {
             $value = $this->asJson($value);
         }
 
@@ -209,11 +153,21 @@ trait HasPreferences
      */
     protected function getDefaultValue($preference, $defaultValue = null)
     {
-        if ($this->hasModelDefinedDefaultValue($preference)) {
+        if ($this->hasPreferneceDefault($preference)) {
             return $this->preference_defaults[$preference];
         }
 
         return $defaultValue;
+    }
+
+    /**
+     * Determine if a model has preference defaults defined.
+     *
+     * @return bool
+     */
+    protected function hasPreferenceDefaults()
+    {
+        return property_exists($this, 'preference_defaults') && is_array($this->preference_defaults);
     }
 
     /**
@@ -222,29 +176,33 @@ trait HasPreferences
      * @param string $preference
      * @return bool
      */
-    protected function hasModelDefinedDefaultValue($preference)
+    protected function hasPreferneceDefault($preference)
     {
-        return property_exists($this, 'preference_defaults')
-            && is_array($this->preference_defaults)
-            && array_key_exists($preference, $this->preference_defaults);
+        return $this->hasPreferenceDefaults() && array_key_exists($preference, $this->preference_defaults);
+    }
+
+    /**
+     * Determine if a model has preference casts defined.
+     *
+     * @return bool
+     */
+    protected function hasPreferenceCasts()
+    {
+        return property_exists($this, 'preference_casts') && is_array($this->preference_casts);
     }
 
     /**
      * Determine if a model has a preference's type cast defined.
      *
      * @param string $preference
-     * @param array|string|null $types
+     * @param array $types
      * @return bool
      */
-    protected function hasPreferenceCast($preference, $types = null)
+    protected function hasPreferenceCast($preference, array $types = null)
     {
-        if (
-            property_exists($this, 'preference_casts')
-            && is_array($this->preference_casts)
-            && array_key_exists($preference, $this->preference_casts)
-        ) {
+        if ($this->hasPreferenceCasts() && array_key_exists($preference, $this->preference_casts)) {
             return $types
-                ? in_array($this->getPreferenceCastType($preference), (array) $types, true)
+                ? in_array($this->getPreferenceCastType($preference), $types, true)
                 : true;
         }
 
@@ -255,10 +213,6 @@ trait HasPreferences
      * Determine whether a preference value is Date / DateTime castable for
      * inbound manipulation.
      *
-     * This logic is taken from the upsteam Eloquent model's isDateCastable()
-     * method
-     *
-     * @see Model::isDateCastable()
      * @param string $preference
      * @return bool
      */
@@ -271,10 +225,6 @@ trait HasPreferences
      * Determine whether a preference value is JSON castable for inbound
      * manipulation.
      *
-     * This logic is taken from the upsteam Eloquent model's isJsonCastable()
-     * method
-     *
-     * @see Model::isJsonCastable()
      * @param string $preference
      * @return bool
      */
@@ -287,32 +237,28 @@ trait HasPreferences
      * Retrieve the type of variable to cast a preference value to.
      *
      * @param string $preference
-     * @return string
+     * @return string|null
      */
     protected function getPreferenceCastType($preference)
     {
-        return trim(strtolower($this->preference_casts[$preference]));
+        return $this->hasPreferenceCast($preference)
+            ? trim(strtolower($this->preference_casts[$preference]))
+            : null;
     }
 
     /**
      * Cast a preference value's type.
      *
-     * This logic is taken from the upsteam Eloquent model's castAttribute()
-     * method
-     *
-     * @see Model::castAttribute()
-     * @see https://laravel.com/docs/5.2/eloquent-mutators#attribute-casting
      * @param string $preference
      * @param mixed $value
      * @return mixed
      */
     protected function castPreferenceValue($preference, $value)
     {
-        if (!$this->hasPreferenceCast($preference)) {
-            return $value;
-        }
+        $castTo = $this->getPreferenceCastType($preference);
 
-        switch ($this->getPreferenceCastType($preference)) {
+        // Cast Eloquent 5.0 compatible types.
+        switch ($castTo) {
             case 'int':
             case 'integer':
                 return (int) $value;
@@ -326,19 +272,39 @@ trait HasPreferences
             case 'boolean':
                 return (bool) $value;
             case 'object':
-                return $this->fromJson($value, true);
+                return method_exists($this, 'fromJson')
+                    ? $this->fromJson($value, true)
+                    : json_decode($value);
             case 'array':
             case 'json':
-                return $this->fromJson($value);
+                return method_exists($this, 'fromJson')
+                    ? $this->fromJson($value)
+                    : json_decode($value, true);
             case 'collection':
-                return new BaseCollection($this->fromJson($value));
-            case 'date':
-            case 'datetime':
-                return $this->asDateTime($value);
-            case 'timestamp':
-                return $this->asTimeStamp($value);
-            default:
-                return $value;
+                return new BaseCollection(
+                    method_exists($this, 'fromJson')
+                        ? $this->fromJson($value)
+                        : json_decode($value, true)
+                );
         }
+
+        // Cast Eloquent 5.1 compatible types.
+        if (method_exists($this, 'asDateTime')) {
+            switch ($castTo) {
+                case 'date':
+                case 'datetime':
+                    return $this->asDateTime($value);
+            }
+        }
+
+        // Cast Eloquent 5.2 compatible types.
+        if (method_exists($this, 'asTimeStamp')) {
+            switch ($castTo) {
+                case 'timestamp':
+                    return $this->asTimeStamp($value);
+            }
+        }
+
+        return $value;
     }
 }
