@@ -10,10 +10,68 @@ use Illuminate\Support\Collection as BaseCollection;
  * Add `use HasPreferences;` to your model class to associate preferences with
  * that model.
  *
+ * @property array $preference_defaults
+ * @property array $preference_casts
  * @property \Illuminate\Database\Eloquent\Collection|\KLaude\EloquentPreferences\Preference[] $preferences
  */
 trait HasPreferences
 {
+    // Re-declare methods defined in Eloquent as abstract methods to prevent IDE
+    // and CI warnings.
+
+    /**
+     * Define a polymorphic one-to-many relationship.
+     *
+     * @param  string  $related
+     * @param  string  $name
+     * @param  string  $type
+     * @param  string  $id
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    abstract public function morphMany($related, $name, $type = null, $id = null, $localKey = null);
+
+    /**
+     * Convert a DateTime to a storable string.
+     *
+     * @param  \DateTime|int  $value
+     * @return string
+     */
+    abstract public function fromDateTime($value);
+
+    /**
+     * Encode the given value as JSON.
+     *
+     * @param  mixed  $value
+     * @return string
+     */
+    abstract protected function asJson($value);
+
+    /**
+     * Decode the given JSON back into an array or object.
+     *
+     * @param  string  $value
+     * @param  bool  $asObject
+     * @return mixed
+     */
+    abstract public function fromJson($value, $asObject = false);
+
+    /**
+     * Return a timestamp as DateTime object.
+     *
+     * @param  mixed  $value
+     * @return \Carbon\Carbon
+     */
+    abstract protected function asDateTime($value);
+
+    /**
+     * Return a timestamp as unix timestamp.
+     *
+     * @param  mixed  $value
+     * @return int
+     */
+    abstract protected function asTimeStamp($value);
+
     /**
      * A model can have many preferences.
      *
@@ -79,7 +137,7 @@ trait HasPreferences
             $this->preferences()->save(
                 new Preference(['preference' => $preference, 'value' => $value])
             );
-        } else{
+        } else {
             $savedPreference->update(['value' => $value]);
         }
 

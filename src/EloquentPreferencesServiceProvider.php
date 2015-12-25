@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 /**
  * Load model preference configs and schema migrations into Laravel.
  *
- * @todo find out how to unit test this without having to load the whole Laravel Framework.
  * @codeCoverageIgnore
  */
 class EloquentPreferencesServiceProvider extends ServiceProvider
