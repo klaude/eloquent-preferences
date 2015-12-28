@@ -207,7 +207,8 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
     {
         $date = Carbon::now();
 
-        return [
+        // Eloquent 5.0 and 5.1 compatible casts.
+        $provide = [
             'int cast to int' => ['int-preference', 1234, 'int', 1234],
             'string cast to int' => ['int-preference', '1234', 'int', 1234],
             'integer' => ['integer-preference', 1234, 'int', 1234],
@@ -220,9 +221,15 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
             'int true cast to bool' => ['bool-preference', 1, 'bool', true],
             'array cast to array' => ['array-preference', [1, 2], 'array', [1, 2]],
             'json cast to array' => ['json-preference', [1, 2], 'array', [1, 2]],
-            'timestamp' => ['timestamp-preference', $date, 'int', $date->timestamp],
             'unknown types don\'t get cast' => ['undefined-type-preference', '1234', 'string', '1234'],
         ];
+
+        // Eloquent 5.2 compatible casts.
+        if (method_exists(new Preference, 'asTimeStamp')) {
+            $provide['timestamp'] = ['timestamp-preference', $date, 'int', $date->timestamp];
+        }
+
+        return $provide;
     }
 
     /**
@@ -251,12 +258,19 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         $collection = new Collection(['foo']);
         $date = Carbon::now();
 
-        return [
+        // Eloquent 5.0 compatible casts.
+        $provide = [
             'object' => ['object-preference', $object, 'stdClass', $object],
             'collection' => ['collection-preference', $collection, Collection::class, $collection],
-            'date' => ['date-preference', $date, Carbon::class, $date],
-            'datetime' => ['datetime-preference', $date, Carbon::class, $date],
         ];
+
+        // Eloquent 5.1 compatible casts.
+        if (method_exists(new Preference, 'asDateTime')) {
+            $provide['date'] = ['date-preference', $date, Carbon::class, $date];
+            $provide['datetime'] = ['datetime-preference', $date, Carbon::class, $date];
+        }
+
+        return $provide;
     }
 
     /**

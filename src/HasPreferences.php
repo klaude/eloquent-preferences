@@ -70,8 +70,8 @@ trait HasPreferences
         // Serialize date and JSON-like preference values.
         if ($this->isPreferenceDateCastable($preference)) {
             $value = $this->fromDateTime($value);
-        } elseif ($this->isPreferenceJsonCastable($preference) && method_exists($this, 'asJson')) {
-            $value = $this->asJson($value);
+        } elseif ($this->isPreferenceJsonCastable($preference)) {
+            $value = method_exists($this, 'asJson') ? $this->asJson($value) : json_encode($value);
         }
 
         /** @var Preference $savedPreference */
