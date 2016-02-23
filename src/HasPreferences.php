@@ -153,7 +153,7 @@ trait HasPreferences
      */
     protected function getDefaultValue($preference, $defaultValue = null)
     {
-        if ($this->hasPreferneceDefault($preference)) {
+        if ($this->hasPreferenceDefault($preference)) {
             return $this->preference_defaults[$preference];
         }
 
@@ -176,7 +176,7 @@ trait HasPreferences
      * @param string $preference
      * @return bool
      */
-    protected function hasPreferneceDefault($preference)
+    protected function hasPreferenceDefault($preference)
     {
         return $this->hasPreferenceDefaults() && array_key_exists($preference, $this->preference_defaults);
     }
