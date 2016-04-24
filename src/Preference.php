@@ -33,6 +33,7 @@ class Preference extends Model
     public function __construct(array $attributes = [])
     {
         $this->setTable($this->getQualifiedTableName());
+        $this->overrideHidden();
 
         parent::__construct($attributes);
     }
@@ -66,5 +67,27 @@ class Preference extends Model
 
         // Otherwise use the default.
         return self::DEFAULT_MODEL_PREFERENCE_TABLE;
+    }
+
+    /**
+     * Set hidden preference attributes.
+     *
+     * Declare hidden from JSON attributes for preferences either via Laravel
+     * config or by a comma-separated string constant
+     * MODEL_PREFERENCE_HIDDEN_ATTRIBUTES.
+     *
+     * @see https://laravel.com/docs/5.2/eloquent-serialization#hiding-attributes-from-json
+     */
+    protected function overrideHidden()
+    {
+        if (function_exists('config')) {
+            return $this->setHidden(config('eloquent-preferences.hidden-attributes', $this->getHidden()));
+        }
+
+        if (defined('MODEL_PREFERENCE_HIDDEN_ATTRIBUTES')) {
+            return $this->setHidden(explode(',', MODEL_PREFERENCE_HIDDEN_ATTRIBUTES));
+        }
+
+        return $this;
     }
 }

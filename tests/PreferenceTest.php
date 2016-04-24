@@ -32,4 +32,30 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('foo-function', (new Preference)->getTable());
     }
+
+    public function testPreferencesHaveNoHiddenAttributesByDefault()
+    {
+        $this->assertEquals([], (new Preference)->getHidden());
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetHiddenAttributesByConstant()
+    {
+        define('MODEL_PREFERENCE_HIDDEN_ATTRIBUTES', 'foo,constant');
+
+        $this->assertEquals(['foo', 'constant'], (new Preference)->getHidden());
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetHiddenAttributesByLaravelConfig()
+    {
+        // Define config() in the global namespace
+        require_once __DIR__ . '/Support/helpers.php';
+
+        $this->assertEquals(['foo', 'function'], (new Preference)->getHidden());
+    }
 }

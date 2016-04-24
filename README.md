@@ -18,6 +18,7 @@ Use this library to bind multiple key/value pair preferences to your application
     * [Removing Preferences](#removing-preferences)
   * [Default Preference Values](#default-preference-values)
   * [Casting Preference Values](#casting-preference-values)
+  * [Hidden Preference Attributes](#hidden-preference-attributes)
 
 <a name="installation"></a>
 ## Installation
@@ -230,3 +231,27 @@ class MyModel extends Model
 ```
 
 As with default values, casting preferences is only performed when using the `getPreference()`, `prefers()`, `setPreference()`, and `setPreferences()` helper methods.
+
+<a name="hidden-preference-attributes"></a>
+### Hidden Preference Attributes
+
+By default all preference model attributes are visible when exporting to JSON. However it is possible to declare hidden attributes that act in the same manner as [Eloquent's hidden attributes](https://laravel.com/docs/5.2/eloquent-serialization#hiding-attributes-from-json). There are two ways to declare which preference attributes to hide from JSON export:
+
+1) If this library is being used in a Laravel project then declare hidden attributes in the "hidden-attributes" key in `config/eloquent-preferences.php`.
+
+```
+return [
+
+    // ...
+
+    'hidden-attributes' => ['created_at', 'updated_at'],
+
+    // ...
+];
+```
+
+2) If this library is being used outside the Laravel framework then define the `MODEL_PREFERENCE_HIDDEN_ATTRIBUTES` constant at your project's point of entry with a comma-separated list of attributes to hide from JSON export.
+
+```php
+const MODEL_PREFERENCE_HIDDEN_ATTRIBUTES = 'created_at,updated_at';
+```

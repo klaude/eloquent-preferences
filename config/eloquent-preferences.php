@@ -14,4 +14,15 @@ return [
 
     'table' => 'model_preferences',
 
+    /*
+    |--------------------------------------------------------------------------
+    | "Hidden" preference columns
+    |--------------------------------------------------------------------------
+    |
+    | The names of the attributes to hide when exporting preferences to JSON.
+    |
+    */
+
+    'hidden-attributes' => [],
+
 ];
