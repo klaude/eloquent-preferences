@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.2.0
+**Released 23 April, 2016**
+* Add support for hiding preference attributes from JSON export ([#2](https://github.com/klaude/eloquent-preferences/issues/2) - Thanks, [@timothyallan](https://github.com/timothyallan)!)
+
 ## Version 0.1.1
 **Released 23 February, 2016**
 * Fix a typo in an internal method name ([#1](https://github.com/klaude/eloquent-preferences/issues/1) - Thanks, [@timothyallan](https://github.com/timothyallan)!)
