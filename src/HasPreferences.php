@@ -257,7 +257,7 @@ trait HasPreferences
     {
         $castTo = $this->getPreferenceCastType($preference);
 
-        // Cast Eloquent 5.0 compatible types.
+        // Cast Eloquent >= 5.0 compatible types.
         switch ($castTo) {
             case 'int':
             case 'integer':
@@ -288,7 +288,7 @@ trait HasPreferences
                 );
         }
 
-        // Cast Eloquent 5.1 compatible types.
+        // Cast Eloquent >= 5.1 compatible types.
         if (method_exists($this, 'asDateTime')) {
             switch ($castTo) {
                 case 'date':
@@ -297,7 +297,7 @@ trait HasPreferences
             }
         }
 
-        // Cast Eloquent 5.2 compatible types.
+        // Cast Eloquent >= 5.2 compatible types.
         if (method_exists($this, 'asTimeStamp')) {
             switch ($castTo) {
                 case 'timestamp':

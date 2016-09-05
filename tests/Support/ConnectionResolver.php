@@ -12,7 +12,7 @@ use PDO;
  * Borrow Laravel's SoftDeletesDatabaseIntegrationTestConnectionResolver class
  * to use as an in-memory SQLite test connection resolver.
  *
- * @see https://github.com/laravel/framework/blob/5.1/tests/Database/DatabaseEloquentSoftDeletesIntegrationTest.php
+ * @see https://github.com/laravel/framework/blob/5.3/tests/Database/DatabaseEloquentSoftDeletesIntegrationTest.php
  */
 class ConnectionResolver implements ConnectionResolverInterface
 {

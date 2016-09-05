@@ -76,7 +76,7 @@ class Preference extends Model
      * config or by a comma-separated string constant
      * MODEL_PREFERENCE_HIDDEN_ATTRIBUTES.
      *
-     * @see https://laravel.com/docs/5.2/eloquent-serialization#hiding-attributes-from-json
+     * @see https://laravel.com/docs/5.3/eloquent-serialization#hiding-attributes-from-json
      */
     protected function overrideHidden()
     {

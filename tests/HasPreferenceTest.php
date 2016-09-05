@@ -19,7 +19,7 @@ use stdClass;
  * This test's structure is based off the Laravel Framework's SoftDeletes trait
  * test.
  *
- * @see https://github.com/laravel/framework/blob/5.1/tests/Database/DatabaseEloquentSoftDeletesIntegrationTest.php
+ * @see https://github.com/laravel/framework/blob/5.3/tests/Database/DatabaseEloquentSoftDeletesIntegrationTest.php
  */
 class HasPreferenceTest extends PHPUnit_Framework_TestCase
 {
@@ -224,7 +224,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
             'unknown types don\'t get cast' => ['undefined-type-preference', '1234', 'string', '1234'],
         ];
 
-        // Eloquent 5.2 compatible casts.
+        // Eloquent >= 5.2 compatible casts.
         if (method_exists(new Preference, 'asTimeStamp')) {
             $provide['timestamp'] = ['timestamp-preference', $date, 'int', $date->timestamp];
         }
