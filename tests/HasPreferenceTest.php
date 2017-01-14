@@ -256,7 +256,13 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         $object = new stdClass;
         $object->foo = 'bar';
         $collection = new Collection(['foo']);
-        $date = Carbon::now();
+
+        // PHP 7.1 introduces microtime to the current time. Microtime is lost
+        // when a Carbon object is serialized as a timestamp. Create the
+        // current time without microtime by getting the current time,
+        // converting it to a timestamp, and creating a new Carbon object
+        // from that.
+        $date = Carbon::createFromTimestamp(Carbon::now()->timestamp);
 
         // Eloquent 5.0 compatible casts.
         $provide = [
