@@ -19,5 +19,4 @@ composer.lock
 vendor/
 
 # Unit tests
-phpunit.xml
 build/

@@ -28,3 +28,6 @@ before_script:
   - composer remove --dev --update-with-dependencies illuminate/events
   - composer require illuminate/database:${LARAVEL_VERSION} illuminate/support:${LARAVEL_VERSION}
   - composer require --dev illuminate/events:${LARAVEL_VERSION}
+
+script:
+  - vendor/bin/phpunit
