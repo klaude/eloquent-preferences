@@ -6,7 +6,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/klaude/eloquent-preferences/v/unstable)](https://packagist.org/packages/klaude/eloquent-preferences)
 [![License](https://poser.pugx.org/klaude/eloquent-preferences/license)](https://packagist.org/packages/klaude/eloquent-preferences)
 
-Use this library to bind multiple key/value pair preferences to your application's Eloquent models. Preferences are stored in your application's database so they can be easily stored and queried for. This library currently only supports Eloquent 5.x installed either standalone or as a part of the full Laravel framework. Issues and pull requests are welcome! See [CONTRIBUTING.md](https://github.com/klaude/eloquent-preferences/blob/master/CONTRIBUTING.md) for more information.
+Use this library to bind multiple key/value pair preferences to your application's Eloquent models. Preferences are stored in your application's database so they can be easily stored and queried for. This library supports Eloquent 5.x or 6.x installed either standalone or as a part of the full Laravel framework. Issues and pull requests are welcome! See [CONTRIBUTING.md](https://github.com/klaude/eloquent-preferences/blob/master/CONTRIBUTING.md) for more information.
 
 * [Installation](#installation)
   * [Configuring In Laravel](#configuring-in-laravel)
