@@ -229,6 +229,11 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
             $provide['timestamp'] = ['timestamp-preference', $date, 'int', $date->timestamp];
         }
 
+        // Eloquent >= 5.7 compatible casts.
+        if (method_exists(new Preference, 'asDecimal')) {
+            $provide['decimal'] = ['decimal-preference', 12.345, 'string', '12.35'];
+        }
+
         return $provide;
     }
 

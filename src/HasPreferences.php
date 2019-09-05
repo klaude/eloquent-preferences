@@ -305,6 +305,11 @@ trait HasPreferences
             }
         }
 
+        // Case Eloquent >= 5.7 compatible types
+        if (method_exists($this, 'asDecimal') && strpos($castTo, 'decimal:') === 0) {
+            return $this->asDecimal($value, explode(':', $castTo, 2)[1]);
+        }
+
         return $value;
     }
 }
