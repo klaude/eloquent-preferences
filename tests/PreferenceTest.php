@@ -9,7 +9,7 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
 {
     public function testSetTheDefaultTableName()
     {
-        $this->assertEquals(Preference::DEFAULT_MODEL_PREFERENCE_TABLE, (new Preference)->getTable());
+        $this->assertEquals(Preference::DEFAULT_MODEL_PREFERENCE_TABLE, (new Preference())->getTable());
     }
 
     /**
@@ -19,7 +19,7 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
     {
         define('MODEL_PREFERENCE_TABLE', 'foo-constant');
 
-        $this->assertEquals('foo-constant', (new Preference)->getTable());
+        $this->assertEquals('foo-constant', (new Preference())->getTable());
     }
 
     /**
@@ -30,12 +30,12 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
         // Define config() in the global namespace
         require_once __DIR__ . '/Support/helpers.php';
 
-        $this->assertEquals('foo-function', (new Preference)->getTable());
+        $this->assertEquals('foo-function', (new Preference())->getTable());
     }
 
     public function testPreferencesHaveNoHiddenAttributesByDefault()
     {
-        $this->assertEquals([], (new Preference)->getHidden());
+        $this->assertEquals([], (new Preference())->getHidden());
     }
 
     /**
@@ -45,7 +45,7 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
     {
         define('MODEL_PREFERENCE_HIDDEN_ATTRIBUTES', 'foo,constant');
 
-        $this->assertEquals(['foo', 'constant'], (new Preference)->getHidden());
+        $this->assertEquals(['foo', 'constant'], (new Preference())->getHidden());
     }
 
     /**
@@ -56,6 +56,6 @@ class PreferenceTest extends PHPUnit_Framework_TestCase
         // Define config() in the global namespace
         require_once __DIR__ . '/Support/helpers.php';
 
-        $this->assertEquals(['foo', 'function'], (new Preference)->getHidden());
+        $this->assertEquals(['foo', 'function'], (new Preference())->getHidden());
     }
 }

@@ -17,7 +17,7 @@ class CreateModelPreferencesTable extends Migration
         Model::getConnectionResolver()
             ->connection()
             ->getSchemaBuilder()
-            ->create((new Preference)->getQualifiedTableName(), function(Blueprint $table) {
+            ->create((new Preference())->getQualifiedTableName(), function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('preference');
                 $table->string('value');
@@ -36,6 +36,6 @@ class CreateModelPreferencesTable extends Migration
         Model::getConnectionResolver()
             ->connection()
             ->getSchemaBuilder()
-            ->drop((new Preference)->getQualifiedTableName());
+            ->drop((new Preference())->getQualifiedTableName());
     }
 }

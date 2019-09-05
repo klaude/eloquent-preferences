@@ -6,7 +6,7 @@
  *
  * @param string $key
  * @param string $default
- * @return string
+ * @return string|array
  */
 function config($key = null, $default = null)
 {

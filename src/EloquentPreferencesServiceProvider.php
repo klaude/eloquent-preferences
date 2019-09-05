@@ -14,7 +14,8 @@ class EloquentPreferencesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/config/eloquent-preferences.php', 'eloquent-preferences'
+            dirname(__DIR__) . '/config/eloquent-preferences.php',
+            'eloquent-preferences'
         );
     }
 

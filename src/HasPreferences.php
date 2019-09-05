@@ -37,7 +37,7 @@ trait HasPreferences
     {
         $savedPreference = $this->preferences()->where('preference', $preference)->first();
 
-        $value = is_null($savedPreference)
+        $value = $savedPreference === null
             ? $this->getDefaultValue($preference, $defaultValue)
             : $savedPreference->value;
 
@@ -77,7 +77,7 @@ trait HasPreferences
         /** @var Preference $savedPreference */
         $savedPreference = $this->preferences()->where('preference', $preference)->first();
 
-        if (is_null($savedPreference)) {
+        if ($savedPreference === null) {
             $this->preferences()->save(
                 new Preference(['preference' => $preference, 'value' => $value])
             );
@@ -242,7 +242,7 @@ trait HasPreferences
     protected function getPreferenceCastType($preference)
     {
         return $this->hasPreferenceCast($preference)
-            ? trim(strtolower($this->preference_casts[$preference]))
+            ? strtolower(trim($this->preference_casts[$preference]))
             : null;
     }
 
@@ -274,7 +274,7 @@ trait HasPreferences
             case 'object':
                 return method_exists($this, 'fromJson')
                     ? $this->fromJson($value, true)
-                    : json_decode($value);
+                    : json_decode($value, false);
             case 'array':
             case 'json':
                 return method_exists($this, 'fromJson')
@@ -298,11 +298,13 @@ trait HasPreferences
         }
 
         // Cast Eloquent >= 5.2 compatible types.
-        if (method_exists($this, 'asTimeStamp')) {
-            switch ($castTo) {
-                case 'timestamp':
-                    return $this->asTimeStamp($value);
-            }
+        if ($castTo === 'timestamp' && method_exists($this, 'asTimeStamp')) {
+            return $this->asTimeStamp($value);
+        }
+
+        // Case Eloquent >= 5.7 compatible types
+        if (method_exists($this, 'asDecimal') && strpos($castTo, 'decimal:') === 0) {
+            return $this->asDecimal($value, explode(':', $castTo, 2)[1]);
         }
 
         return $value;

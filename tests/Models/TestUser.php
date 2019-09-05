@@ -41,5 +41,6 @@ class TestUser extends Model
         'datetime-preference' => 'datetime',
         'timestamp-preference' => 'timestamp',
         'undefined-type-preference' => 'undefined',
+        'decimal-preference' => 'decimal:2',
     ];
 }
