@@ -37,8 +37,8 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        Eloquent::setConnectionResolver(new ConnectionResolver);
-        Eloquent::setEventDispatcher(new Dispatcher);
+        Eloquent::setConnectionResolver(new ConnectionResolver());
+        Eloquent::setEventDispatcher(new Dispatcher());
     }
 
     /**
@@ -60,7 +60,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
             $table->string('email');
         });
 
-        (new CreateModelPreferencesTable)->up();
+        (new CreateModelPreferencesTable())->up();
 
         $this->testUser = TestUser::create(['id' => 1, 'email' => 'johndoe@example.org']);
     }
@@ -225,12 +225,12 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         ];
 
         // Eloquent >= 5.2 compatible casts.
-        if (method_exists(new Preference, 'asTimeStamp')) {
+        if (method_exists(new Preference(), 'asTimeStamp')) {
             $provide['timestamp'] = ['timestamp-preference', $date, 'int', $date->timestamp];
         }
 
         // Eloquent >= 5.7 compatible casts.
-        if (method_exists(new Preference, 'asDecimal')) {
+        if (method_exists(new Preference(), 'asDecimal')) {
             $provide['decimal'] = ['decimal-preference', 12.345, 'string', '12.35'];
         }
 
@@ -258,7 +258,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
      */
     public function provideObjectTypesInputsAndOutputs()
     {
-        $object = new stdClass;
+        $object = new stdClass();
         $object->foo = 'bar';
         $collection = new Collection(['foo']);
 
@@ -276,7 +276,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         ];
 
         // Eloquent 5.1 compatible casts.
-        if (method_exists(new Preference, 'asDateTime')) {
+        if (method_exists(new Preference(), 'asDateTime')) {
             $provide['date'] = ['date-preference', $date, Carbon::class, $date];
             $provide['datetime'] = ['datetime-preference', $date, Carbon::class, $date];
         }
