@@ -12,6 +12,7 @@ cache:
 # * Laravel 5.6+ requires PHP 7.1+.
 # * Laravel 6.0+ requires PHP 7.2+.
 # * Laravel 7.0+ requires PHP 7.2+.
+# * Laravel 8.0+ requires PHP 7.3+.
 # * TravisCI tests in Ubuntu 16.04 Xenial Xerus, which doesn't support PHP 5.5.
 #   Test 5.5 in Trusty Tahr instead.
 matrix:
@@ -112,6 +113,8 @@ matrix:
       env: LARAVEL_VERSION="6.0.*"
     - php: "7.3"
       env: LARAVEL_VERSION="7.0.*"
+    - php: "7.3"
+      env: LARAVEL_VERSION="8.0.*"
 
     - php: "7.4"
       env: LARAVEL_VERSION="5.0.*"
@@ -135,6 +138,8 @@ matrix:
       env: LARAVEL_VERSION="6.0.*"
     - php: "7.4"
       env: LARAVEL_VERSION="7.0.*"
+    - php: "7.4"
+      env: LARAVEL_VERSION="8.0.*"
 
 # Code coverage testing isn't necessary, so remove xdebug to speed things up.
 before_install:
