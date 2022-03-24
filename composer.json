@@ -2,7 +2,11 @@
     "name": "klaude/eloquent-preferences",
     "type": "library",
     "description": "Preferences for Laravel Eloquent models",
-    "keywords": ["laravel", "eloquent", "preferences"],
+    "keywords": [
+        "laravel",
+        "eloquent",
+        "preferences"
+    ],
     "homepage": "https://github.com/klaude/eloquent-preferences",
     "license": "MIT",
     "authors": [
@@ -13,8 +17,8 @@
     ],
     "require": {
         "ext-json": "*",
-        "illuminate/database": "~5|~6.0|~7.0|~8.0",
-        "illuminate/support": "~5|~6.0|~7.0|~8.0"
+        "illuminate/database": "~5|~6.0|~7.0|~8.0|^9.0",
+        "illuminate/support": "~5|~6.0|~7.0|~8.0|^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -23,8 +27,8 @@
     },
     "require-dev": {
         "ext-pdo": "*",
-        "illuminate/events": "~5|~6.0|~7.0|~8.0",
-        "phpunit/phpunit": "~5.0|~4.8"
+        "illuminate/events": "~5|~6.0|~7.0|~8.0|^9.0",
+        "phpunit/phpunit": "~5.0|~4.8|^9.5.10"
     },
     "autoload-dev": {
         "psr-4": {
