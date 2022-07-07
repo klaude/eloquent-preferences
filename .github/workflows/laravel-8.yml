@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.3', '7.4', '8.0', '8.1']
-        laravel-versions: ['8.0.*']
+        php-versions: ['7.3', '7.4', '8.0', '8.1', '8.2']
+        laravel-versions: ['8.0.*', '8.1.*', '8.2.*', '8.3.*', '8.4.*', '8.5.*', '8.6.*']
     name: PHP ${{ matrix.php-versions }}, Laravel ${{ matrix.laravel-versions }}
     steps:
     - uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
         sed -i -e "s/\"illuminate\/database\": \"\(.*\)\"/\"illuminate\/database\": \"${{ matrix.laravel-versions }}\"/" composer.json
         sed -i -e "s/\"illuminate\/support\": \"\(.*\)\"/\"illuminate\/support\": \"${{ matrix.laravel-versions }}\"/" composer.json
         sed -i -e "s/\"illuminate\/events\": \"\(.*\)\"/\"illuminate\/events\": \"${{ matrix.laravel-versions }}\"/" composer.json
-        composer install --dev --prefer-dist --no-progress
+        composer install --prefer-dist --no-progress
 
     - name: Run test suite
       run: vendor/bin/phpunit
