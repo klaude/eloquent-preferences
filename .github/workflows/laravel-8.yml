@@ -1,0 +1,49 @@
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['7.3', '7.4', '8.0', '8.1']
+        laravel-versions: ['8.0.*']
+    name: PHP ${{ matrix.php-versions }}, Laravel ${{ matrix.laravel-versions }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        # extensions: intl #optional
+        # ini-values: "post_max_size=256M" #optional
+    - name: Check PHP version
+      run: php -v
+    - name Check Composer version
+      run: composer --version
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: |
+        sed -i -e "s/\"illuminate\/database\": \"\(.*\)\"/\"illuminate\/database\": \"${{ matrix.laravel-versions }}\"/" composer.json
+        sed -i -e "s/\"illuminate\/support\": \"\(.*\)\"/\"illuminate\/support\": \"${{ matrix.laravel-versions }}\"/" composer.json
+        sed -i -e "s/\"illuminate\/events\": \"\(.*\)\"/\"illuminate\/events\": \"${{ matrix.laravel-versions }}\"/" composer.json
+        composer install --dev --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: vendor/bin/phpunit
