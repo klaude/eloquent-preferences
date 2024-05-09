@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 use KLaude\EloquentPreferences\Preference;
 use KLaude\EloquentPreferences\Tests\Models\TestUser;
 use KLaude\EloquentPreferences\Tests\Support\ConnectionResolver;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
@@ -21,7 +21,7 @@ use stdClass;
  *
  * @see https://github.com/laravel/framework/blob/5.3/tests/Database/DatabaseEloquentSoftDeletesIntegrationTest.php
  */
-class HasPreferenceTest extends PHPUnit_Framework_TestCase
+class HasPreferenceTest extends TestCase
 {
     /**
      * A test user model with preferences.
@@ -35,7 +35,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Eloquent::setConnectionResolver(new ConnectionResolver());
         Eloquent::setEventDispatcher(new Dispatcher());
@@ -44,7 +44,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
     /**
      * Tear down Eloquent.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Eloquent::unsetEventDispatcher();
         Eloquent::unsetConnectionResolver();
@@ -53,7 +53,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
     /**
      * Set up the test database schema and data.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->schema()->create('users', function (Blueprint $table) {
             $table->increments('id');
@@ -68,7 +68,7 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
     /**
      * Tear down the database schema.
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->schema()->drop('users');
         $this->schema()->drop(Preference::DEFAULT_MODEL_PREFERENCE_TABLE);
@@ -249,7 +249,26 @@ class HasPreferenceTest extends PHPUnit_Framework_TestCase
         $this->testUser->setPreference($preference, $input);
         $value = $this->testUser->getPreference($preference);
 
-        $this->assertInternalType($expectedInternalType, $value);
+        switch ($expectedInternalType) {
+            case 'int':
+                $this->assertIsInt($value);
+                break;
+            case 'float':
+                $this->assertIsFloat($value);
+                break;
+            case 'string':
+                $this->assertIsString($value);
+                break;
+            case 'bool':
+                $this->assertIsBool($value);
+                break;
+            case 'array':
+                $this->assertIsArray($value);
+                break;
+            default:
+                throw new \Exception("Unexpected expected internal type \"{$expectedInternalType}\"");
+        }
+
         $this->assertEquals($expectedOutput, $value);
     }
 

@@ -20,3 +20,4 @@ vendor/
 
 # Unit tests
 build/
+.phpunit.result.cache

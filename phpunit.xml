@@ -2,11 +2,9 @@
 <phpunit bootstrap="./tests/bootstrap.php"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
@@ -20,9 +18,6 @@
     </testsuites>
 
     <filter>
-        <blacklist>
-            <directory>./vendor</directory>
-        </blacklist>
         <whitelist>
             <directory>./src</directory>
         </whitelist>
